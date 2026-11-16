@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Aldi Dent демо</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+[hidden]{display:none!important}
+/* Layout: sticky header, hash views (home / catalog / cart / checkout / done), product sheet as modal. Instrument-steel neutrals, one surgical-blue accent. */
+:root{
+  --bg:#F3F5F7; --surface:#FFFFFF; --sunk:#E8ECF0; --fg:#14202B; --muted:#5B6874; --line:#D6DDE3;
+  --accent:#1659A6; --accent-fg:#FFFFFF; --accent-soft:#E2ECF7; --sale:#B4382E; --ok:#227A4E;
+  --display:"Onest",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --body:"Onest",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0F151B; --surface:#171F27; --sunk:#1F2A34; --fg:#E6ECF1; --muted:#9AA8B4; --line:#2C3843;
+  --accent:#6EA8EC; --accent-fg:#0B1622; --accent-soft:#1B2C40; --sale:#F08A7E; --ok:#6CC796; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F151B; --surface:#171F27; --sunk:#1F2A34; --fg:#E6ECF1; --muted:#9AA8B4; --line:#2C3843;
+  --accent:#6EA8EC; --accent-fg:#0B1622; --accent-soft:#1B2C40; --sale:#F08A7E; --ok:#6CC796; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:15px/1.5 var(--body);margin:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--surface)}
+.gut{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.in{max-width:1180px;margin:0 auto}
+a{color:inherit}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+.mono{font-family:var(--mono)}
+
+/* header */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:16px;height:64px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;font:800 18px/1 var(--display);letter-spacing:.04em}
+.logo-mark{width:30px;height:30px;border-radius:8px;background:var(--accent);color:var(--accent-fg);display:grid;place-items:center;font-size:15px;letter-spacing:0}
+nav.main{display:flex;gap:4px;margin-left:12px}
+nav.main a{text-decoration:none;padding:8px 12px;border-radius:8px;color:var(--muted);font-weight:500}
+nav.main a:hover,nav.main a.on{color:var(--fg);background:var(--sunk)}
+.search{flex:1;min-width:0;display:flex}
+.search input{width:100%;font:inherit;padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--fg)}
+.cartbtn{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 14px;font-weight:600;white-space:nowrap}
+.cartbtn .cnt{background:var(--accent);color:var(--accent-fg);border-radius:999px;min-width:22px;height:22px;display:grid;place-items:center;font-size:12px;padding:0 6px}
+.subbar{border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+.subbar .in{display:flex;gap:20px;height:34px;align-items:center;overflow-x:auto;white-space:nowrap}
+.subbar b{color:var(--fg);font-weight:600}
+@media (max-width:820px){nav.main{display:none}.bar{gap:10px}.search{order:3;flex-basis:100%}.bar{flex-wrap:wrap;height:auto;padding-block:10px}.subbar{display:none}}
+
+main{padding-block:24px 64px;min-height:60vh}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
+h2{font-size:24px;font-weight:700;letter-spacing:-.01em}
+.sec{display:flex;flex-direction:column;gap:16px;margin-top:44px}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.link{color:var(--accent);font-weight:600;text-decoration:none;background:none;border:0;padding:0}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1.2fr 1fr;gap:24px;align-items:stretch}
+.hero-main{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:32px;display:flex;flex-direction:column;gap:16px;justify-content:center}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.hero h1{font-size:clamp(28px,4.4vw,44px);line-height:1.08;font-weight:800;letter-spacing:-.02em}
+.hero p{margin:0;color:var(--muted);max-width:52ch;font-size:16px}
+.ctas{display:flex;gap:10px;flex-wrap:wrap}
+.btn{border:1px solid var(--accent);background:var(--accent);color:var(--accent-fg);border-radius:10px;padding:12px 18px;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn.block{width:100%}
+.hero-art{border-radius:16px;background:var(--accent-soft);border:1px solid var(--line);display:grid;grid-template-columns:repeat(3,1fr);gap:1px;overflow:hidden}
+.hero-art div{background:var(--surface);display:grid;place-items:center;padding:18px;color:var(--accent);min-height:110px}
+.hero-art svg{width:72px;height:72px}
+.specs{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-top:16px}
+.specs div{background:var(--surface);padding:14px 16px;display:flex;flex-direction:column;gap:2px}
+.specs b{font-size:16px}
+.specs span{font-size:13px;color:var(--muted)}
+@media (max-width:820px){.hero{grid-template-columns:1fr}.hero-main{padding:22px}.specs{grid-template-columns:1fr 1fr}}
+
+/* categories */
+.cats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.cat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;gap:12px;align-items:center;text-align:left}
+.cat:hover{border-color:var(--accent)}
+.cat svg{width:44px;height:44px;color:var(--accent);flex:none}
+.cat b{display:block;font-weight:600}
+.cat span{font-size:13px;color:var(--muted)}
+@media (max-width:820px){.cats{grid-template-columns:1fr 1fr}}
+@media (max-width:420px){.cat{padding:12px;gap:8px}.cat svg{width:34px;height:34px}}
+
+/* product grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+@media (max-width:520px){.grid{grid-template-columns:1fr 1fr;gap:10px}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.card .pic{background:var(--sunk);aspect-ratio:4/3;max-width:100%;display:grid;place-items:center;color:var(--accent);position:relative;border:0;padding:0;width:100%}
+.card .pic svg{width:46%;height:auto}
+.badge{position:absolute;top:10px;left:10px;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:4px 8px;border-radius:6px;background:var(--surface);color:var(--fg);border:1px solid var(--line)}
+.badge.sale{background:var(--sale);color:#fff;border-color:transparent}
+.card .body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:6px;flex:1}
+.sku{font:12px var(--mono);color:var(--muted)}
+.card h3{font-size:15px;font-weight:600;line-height:1.3;cursor:pointer}
+.card .meta{font-size:12px;color:var(--muted)}
+.price{display:flex;align-items:baseline;gap:8px;margin-top:auto;padding-top:6px}
+.price b{font-size:18px;font-weight:700}
+.price s{color:var(--muted);font-size:13px}
+.stock{font-size:12px;color:var(--ok);font-weight:500}
+.stock.no{color:var(--muted)}
+.add{margin-top:8px;border:1px solid var(--accent);background:var(--accent);color:var(--accent-fg);border-radius:9px;padding:9px 10px;font-weight:600}
+.add.in{background:var(--accent-soft);color:var(--accent)}
+.add:disabled{opacity:.5;cursor:not-allowed}
+
+/* catalog */
+.catalog{display:grid;grid-template-columns:250px 1fr;gap:24px;align-items:start}
+.filters{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:18px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 112px)}
+.filters h4{margin:0 0 8px;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.chk{display:flex;gap:8px;align-items:center;padding:4px 0;font-size:14px;cursor:pointer}
+.chk input{accent-color:var(--accent);width:16px;height:16px}
+.chk em{margin-left:auto;font-style:normal;color:var(--muted);font-size:12px}
+.range{display:flex;gap:8px}
+.range input,select,.f input{font:inherit;width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);min-width:0}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.toolbar select{width:auto}
+.ftoggle{display:none}
+@media (max-width:820px){.catalog{grid-template-columns:1fr}.filters{position:static;display:none}.filters.open{display:flex}.ftoggle{display:inline-flex}}
+.empty{background:var(--surface);border:1px dashed var(--line);border-radius:12px;padding:32px;text-align:center;color:var(--muted)}
+
+/* info blocks */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width:820px){.two,.three{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.panel h3{font-size:17px;font-weight:700}
+.panel p{margin:0;color:var(--muted)}
+table.t{width:100%;border-collapse:collapse;font-size:14px}
+table.t td{padding:9px 0;border-bottom:1px solid var(--line)}
+table.t td:last-child{text-align:right;font-weight:600}
+table.t tr:last-child td{border-bottom:0}
+.quote{font-size:15px;color:var(--fg)!important}
+.who{font-size:13px;color:var(--muted)}
+.steps{counter-reset:s;display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.steps div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;counter-increment:s}
+.steps div::before{content:counter(s);display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-weight:700;margin-bottom:10px}
+@media (max-width:820px){.steps{grid-template-columns:1fr 1fr}}
+
+/* cart & checkout */
+.cartwrap{display:grid;grid-template-columns:1fr 340px;gap:24px;align-items:start}
+.cartwrap>*{min-width:0}
+@media (max-width:900px){.cartwrap{grid-template-columns:minmax(0,1fr)}}
+.line{display:grid;grid-template-columns:72px 1fr auto;gap:14px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px}
+.line .thumb{width:72px;height:60px;border-radius:8px;background:var(--sunk);display:grid;place-items:center;color:var(--accent)}
+.line .thumb svg{width:40px;height:40px}
+.line h3{font-size:15px;font-weight:600}
+.qty{display:flex;align-items:center;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.qty button{border:0;background:var(--sunk);width:32px;height:32px;font-size:16px}
+.qty span{min-width:32px;text-align:center}
+.lineright{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.rm{border:0;background:none;color:var(--muted);font-size:13px;padding:0}
+@media (max-width:520px){.line{grid-template-columns:56px 1fr}.line .thumb{width:56px;height:48px}.lineright{grid-column:1/-1;flex-direction:row;justify-content:space-between;align-items:center}}
+.sum{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:10px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 112px)}
+.sum .row{display:flex;justify-content:space-between;gap:10px;font-size:14px}
+.sum .row.total{font-size:20px;font-weight:700;border-top:1px solid var(--line);padding-top:10px}
+.sum .row.disc{color:var(--ok)}
+.promo{display:flex;gap:8px}
+.promo input{flex:1;min-width:0;font:inherit;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg)}
+.promo button{border:1px solid var(--line);background:var(--sunk);border-radius:8px;padding:0 12px;font-weight:600}
+.note{font-size:12px;color:var(--muted)}
+.bonus{background:var(--accent-soft);color:var(--fg);border-radius:8px;padding:10px 12px;font-size:13px}
+form.co{display:flex;flex-direction:column;gap:16px}
+.f{display:flex;flex-direction:column;gap:6px}
+.f label{font-weight:500;font-size:14px}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:520px){.f2{grid-template-columns:1fr}}
+.opts{display:grid;gap:8px}
+.opt{display:flex;gap:12px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:12px 14px;cursor:pointer;background:var(--surface)}
+.opt:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.opt input{accent-color:var(--accent);width:18px;height:18px;flex:none}
+.opt b{font-weight:600;display:block}
+.opt span{font-size:13px;color:var(--muted)}
+.opt .pr{margin-left:auto;font-weight:600;white-space:nowrap}
+.err{color:var(--sale);font-size:13px;min-height:18px}
+
+/* modal */
+.modal{position:fixed;inset:0;z-index:40;background:rgba(10,18,26,.55);display:grid;place-items:center;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.sheet{background:var(--surface);border-radius:16px;max-width:860px;width:100%;max-height:100%;overflow:auto;display:grid;grid-template-columns:1fr 1fr;position:relative}
+.sheet .pic{background:var(--sunk);display:grid;place-items:center;color:var(--accent);min-height:280px}
+.sheet .pic svg{width:55%}
+.sheet .info{padding:24px;display:flex;flex-direction:column;gap:12px}
+.sheet h2{font-size:22px}
+.close{position:absolute;top:10px;right:10px;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font-size:18px}
+dl.props{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:0;font-size:14px}
+dl.props dt{color:var(--muted)}
+dl.props dd{margin:0}
+@media (max-width:700px){.sheet{grid-template-columns:1fr}.sheet .pic{min-height:180px}}
+
+/* toast & footer */
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:10px;font-weight:500;z-index:50;font-size:14px;max-width:calc(100% - 32px)}
+.wa{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:15;background:#1F9D55;color:#fff;border-radius:999px;padding:12px 16px;font-weight:600;text-decoration:none;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+footer{background:var(--surface);border-top:1px solid var(--line);padding-block:28px calc(28px + env(safe-area-inset-bottom,0px));font-size:14px;color:var(--muted)}
+footer .in{display:grid;grid-template-columns:2fr 1fr 1fr;gap:24px}
+footer b{color:var(--fg);display:block;margin-bottom:6px}
+footer .demo{grid-column:1/-1;border-top:1px solid var(--line);padding-top:14px;font-size:12px}
+@media (max-width:700px){footer .in{grid-template-columns:1fr}}
+.done{max-width:560px;margin:0 auto;text-align:center;display:flex;flex-direction:column;gap:14px;align-items:center}
+.done .ok{width:64px;height:64px;border-radius:50%;background:var(--accent-soft);color:var(--ok);display:grid;place-items:center;font-size:30px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<header class="top">
+  <div class="gut"><div class="in bar">
+    <a class="logo" href="#home"><span class="logo-mark">AD</span>ALDI DENT</a>
+    <nav class="main" aria-label="Разделы">
+      <a href="#catalog" data-nav="catalog">Каталог</a>
+      <a href="#home" data-jump="delivery">Доставка и оплата</a>
+      <a href="#home" data-jump="about">О компании</a>
+      <a href="#home" data-jump="contacts">Контакты</a>
+    </nav>
+    <form class="search" id="searchForm" role="search"><input id="q" type="search" placeholder="Поиск: щипцы, элеватор, артикул…" aria-label="Поиск по каталогу"></form>
+    <a class="cartbtn" href="#cart" aria-label="Корзина">Корзина <span class="cnt num" id="cartCount">0</span></a>
+  </div></div>
+  <div class="subbar gut"><div class="in">
+    <span>Доставка <b>СДЭК</b> и <b>Почтой России</b> по всей стране</span>
+    <span>Бесплатно от <b class="num">15 000 ₽</b></span>
+    <span>Оплата картой, по <b>СБП</b> или при получении</span>
+    <span>Самовывоз со склада</span>
+  </div></div>
+</header>
+
+<main class="gut"><div class="in" id="view"></div></main>
+
+<footer class="gut">
+  <div class="in">
+    <div><b>ALDI DENT</b>Хирургические инструменты для стоматологии. Поставки клиникам и частным врачам по всей России.</div>
+    <div><b>Покупателям</b><a href="#catalog">Каталог</a><br><a href="#home" data-jump="delivery">Доставка и оплата</a><br><a href="#home" data-jump="reviews">Отзывы</a></div>
+    <div id="contacts"><b>Контакты</b><span class="num">8 965 411-11-86</span><br>WhatsApp, Telegram<br>Ежедневно 9:00–20:00</div>
+    <div class="demo">Демо-версия сайта. Товары, цены, характеристики и отзывы указаны для примера. Оплата и отправка заказов в демо не выполняются.</div>
+  </div>
+</footer>
+
+<a class="wa" id="waBtn" target="_blank" rel="noopener" href="https://wa.me/79654111186">WhatsApp</a>
+<div id="modal"></div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const IC={
+ forceps:'<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M28 92 C30 70 40 56 47 46 L50 12"/><path d="M72 92 C70 70 60 56 53 46 L50 12"/><path d="M44 18 C46 10 54 10 56 18"/><circle cx="50" cy="44" r="4"/></svg>',
+ elevator:'<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><rect x="40" y="52" width="20" height="42" rx="8"/><path d="M50 52 V20"/><path d="M50 20 C44 18 44 8 50 6 C56 8 56 18 50 20"/><path d="M44 62 H56 M44 70 H56 M44 78 H56"/></svg>',
+ scalpel:'<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 86 L58 50"/><path d="M58 50 L64 44 C72 34 82 24 86 16 C78 22 66 30 56 38 L52 44 Z"/><path d="M30 80 L36 74"/></svg>',
+ scissors:'<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="80" r="9"/><circle cx="68" cy="80" r="9"/><path d="M38 73 L58 30 Q60 18 62 12"/><path d="M62 73 L42 30 Q40 18 38 12"/></svg>',
+ needle:'<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="82" r="8"/><circle cx="68" cy="82" r="8"/><path d="M38 76 L48 46 M62 76 L52 46"/><rect x="45" y="40" width="10" height="8" rx="2"/><path d="M47 40 L49 10 M53 40 L51 10"/></svg>',
+ curette:'<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M50 90 V28"/><path d="M50 28 C50 18 60 16 60 24 C60 30 54 32 50 28"/><path d="M45 50 H55 M45 60 H55 M45 70 H55 M45 80 H55"/></svg>',
+ rasp:'<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M50 92 V30"/><path d="M42 30 H58 L56 12 H44 Z"/><path d="M44 54 H56 M44 64 H56 M44 74 H56"/></svg>',
+ sets:'<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><rect x="12" y="26" width="76" height="52" rx="6"/><path d="M26 38 V66 M40 38 V66 M54 38 V66 M68 34 V70"/><path d="M12 40 H88" opacity=".4"/></svg>'
+};
+const CATS=[
+ {id:'forceps',name:'Щипцы для удаления',hint:'Верхние и нижние, детские'},
+ {id:'elevator',name:'Элеваторы',hint:'Прямые, угловые, Леклюза'},
+ {id:'scalpel',name:'Скальпели и ручки',hint:'Ручки № 3, 4, лезвия'},
+ {id:'needle',name:'Иглодержатели',hint:'Гегара, Кастровьехо'},
+ {id:'scissors',name:'Ножницы',hint:'Для швов, Гольдман-Фокс'},
+ {id:'curette',name:'Кюретки и ложки',hint:'Костные ложки, Люкас'},
+ {id:'rasp',name:'Распаторы',hint:'Молт, Прихард'},
+ {id:'sets',name:'Наборы',hint:'Для удаления и имплантации'}
+];
+const P=[
+ [1,'Щипцы для удаления верхних резцов и клыков № 1','forceps','AD-F001',2450,null,'Хит',170,'AISI 420',1],
+ [2,'Щипцы для удаления верхних премоляров № 7','forceps','AD-F007',2450,null,null,175,'AISI 420',1],
+ [3,'Щипцы для удаления верхних моляров правые № 17','forceps','AD-F017',2690,null,null,180,'AISI 420',1],
+ [4,'Щипцы для удаления нижних моляров № 22','forceps','AD-F022',2690,2990,'Скидка',170,'AISI 420',1],
+ [5,'Щипцы-клювы для корней верхней челюсти № 51','forceps','AD-F051',2390,null,null,175,'AISI 420',0],
+ [6,'Элеватор прямой, лопатка 3 мм','elevator','AD-E103',1290,null,'Хит',150,'AISI 420',1],
+ [7,'Элеватор угловой левый','elevator','AD-E211',1390,null,null,155,'AISI 420',1],
+ [8,'Элеватор Леклюза','elevator','AD-E301',1490,null,null,160,'AISI 420',1],
+ [9,'Набор элеваторов прямых 3 шт.','elevator','AD-E900',3590,3990,'Скидка',150,'AISI 420',1],
+ [10,'Ручка для скальпеля № 3','scalpel','AD-S003',590,null,null,125,'AISI 304',1],
+ [11,'Ручка для скальпеля круглая, микро','scalpel','AD-S010',890,null,'Новинка',160,'AISI 304',1],
+ [12,'Лезвия хирургические № 15, 100 шт.','scalpel','AD-S115',1190,null,null,null,'Углеродистая сталь',1],
+ [13,'Иглодержатель Гегара','needle','AD-N140',1690,null,'Хит',140,'AISI 420',1],
+ [14,'Иглодержатель Кастровьехо изогнутый','needle','AD-N180',3290,null,null,180,'Титан',1],
+ [15,'Иглодержатель Матье','needle','AD-N170',1890,null,null,170,'AISI 420',0],
+ [16,'Ножницы для швов Гольдман-Фокс изогнутые','scissors','AD-C130',1590,null,null,130,'AISI 420',1],
+ [17,'Ножницы микрохирургические прямые','scissors','AD-C160',2890,null,'Новинка',160,'Титан',1],
+ [18,'Кюретка хирургическая Люкас № 86','curette','AD-K086',990,null,null,170,'AISI 420',1],
+ [19,'Ложка костная двусторонняя','curette','AD-K020',890,null,null,165,'AISI 420',1],
+ [20,'Кюретка Молт № 4','curette','AD-K404',1090,null,null,175,'AISI 420',1],
+ [21,'Распатор Молт № 9','rasp','AD-R009',1190,null,'Хит',180,'AISI 420',1],
+ [22,'Распатор Прихард','rasp','AD-R021',1290,null,null,170,'AISI 420',1],
+ [23,'Набор для удаления зубов, 12 инструментов','sets','AD-SET12',24900,27900,'Скидка',null,'AISI 420',1],
+ [24,'Хирургический набор для имплантации, кассета','sets','AD-SET-IM',38500,null,'Новинка',null,'Титан / AISI 420',1]
+].map(a=>({id:a[0],name:a[1],cat:a[2],sku:a[3],price:a[4],old:a[5],badge:a[6],len:a[7],mat:a[8],stock:!!a[9]}));
+const byId=id=>P.find(p=>p.id===id);
+const catName=id=>CATS.find(c=>c.id===id).name;
+const rub=n=>n.toLocaleString('ru-RU')+' ₽';
+const DELIV=[
+ {id:'cdek',name:'СДЭК, пункт выдачи',hint:'2–5 дней',price:350},
+ {id:'cdekc',name:'СДЭК, курьер до двери',hint:'2–5 дней',price:590},
+ {id:'post',name:'Почта России',hint:'5–10 дней',price:420},
+ {id:'pick',name:'Самовывоз со склада',hint:'Сегодня, после подтверждения',price:0}
+];
+const PROMOS={'ALDI10':.10,'КЛИНИКА5':.05};
+const FREE_FROM=15000;
+
+let cart={}, promo=null, filt={cats:new Set(),min:'',max:'',stock:false,sort:'pop',q:''};
+try{const s=JSON.parse(localStorage.getItem('aldident-demo')||'null');if(s){cart=s.cart||{};promo=s.promo||null}}catch(e){}
+function persist(){try{localStorage.setItem('aldident-demo',JSON.stringify({cart,promo}))}catch(e){}}
+const V=document.getElementById('view');
+
+function count(){return Object.values(cart).reduce((a,b)=>a+b,0)}
+function subtotal(){return Object.entries(cart).reduce((s,[id,q])=>s+byId(+id).price*q,0)}
+function updCount(){document.getElementById('cartCount').textContent=count()}
+function toast(t){const el=document.getElementById('toast');el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,1800)}
+function add(id){cart[id]=(cart[id]||0)+1;persist();updCount();toast('Добавлено в корзину');rerenderCards()}
+
+function card(p){
+ const inCart=cart[p.id];
+ return `<article class="card">
+  <button class="pic" data-open="${p.id}" aria-label="Подробнее: ${p.name}">${IC[p.cat]}${p.badge?`<span class="badge ${p.badge==='Скидка'?'sale':''}">${p.badge}</span>`:''}</button>
+  <div class="body">
+   <div class="sku">арт. ${p.sku}</div>
+   <h3 data-open="${p.id}">${p.name}</h3>
+   <div class="meta">${p.len?p.len+' мм · ':''}${p.mat}</div>
+   <div class="price num"><b>${rub(p.price)}</b>${p.old?`<s>${rub(p.old)}</s>`:''}</div>
+   <div class="stock ${p.stock?'':'no'}">${p.stock?'В наличии':'Под заказ, 7–10 дней'}</div>
+   <button class="add ${inCart?'in':''}" data-add="${p.id}">${inCart?'В корзине · '+inCart:'В корзину'}</button>
+  </div></article>`;
+}
+function rerenderCards(){document.querySelectorAll('[data-add]').forEach(b=>{const q=cart[b.dataset.add];b.classList.toggle('in',!!q);b.textContent=q?'В корзине · '+q:'В корзину'})}
+
+function home(){
+ const hits=P.filter(p=>p.badge==='Хит').slice(0,4);
+ V.innerHTML=`
+ <section class="hero">
+  <div class="hero-main">
+   <div class="eyebrow">Стоматологическая хирургия</div>
+   <h1>Хирургические инструменты для стоматологов и клиник</h1>
+   <p>Щипцы, элеваторы, иглодержатели и наборы из медицинской стали. Отправляем по России СДЭК и Почтой, клиникам выставляем счёт.</p>
+   <div class="ctas"><a class="btn" href="#catalog">Перейти в каталог</a><a class="btn ghost" href="#catalog" data-setcat="sets">Готовые наборы</a></div>
+  </div>
+  <div class="hero-art" aria-hidden="true">${['forceps','elevator','needle','scissors','curette','scalpel'].map(k=>`<div>${IC[k]}</div>`).join('')}</div>
+ </section>
+ <div class="specs">
+  <div><b class="num">${P.length * 25}+</b><span>позиций в каталоге</span></div>
+  <div><b>AISI 420</b><span>медицинская сталь</span></div>
+  <div><b class="num">до 134 °C</b><span>автоклавирование</span></div>
+  <div><b class="num">от 15 000 ₽</b><span>бесплатная доставка</span></div>
+ </div>
+ <section class="sec"><div class="sec-head"><h2>Категории</h2><a class="link" href="#catalog">Весь каталог</a></div>
+  <div class="cats">${CATS.map(c=>`<button class="cat" data-setcat="${c.id}">${IC[c.id]}<div><b>${c.name}</b><span>${c.hint}</span></div></button>`).join('')}</div>
+ </section>
+ <section class="sec"><div class="sec-head"><h2>Хиты продаж</h2><a class="link" href="#catalog">Смотреть все</a></div>
+  <div class="grid">${hits.map(card).join('')}</div>
+ </section>
+ <section class="sec" id="about"><h2>Почему покупают у нас</h2>
+  <div class="three">
+   <div class="panel"><h3>Наличие на складе</h3><p>Ходовые позиции отгружаем в день заказа. Остальное привозим под заказ за 7–10 дней.</p></div>
+   <div class="panel"><h3>Работаем с клиниками</h3><p>Счёт на юрлицо, закрывающие документы, отсрочка для постоянных клиентов.</p></div>
+   <div class="panel"><h3>Бонусы за покупки</h3><p>Возвращаем 5% от суммы заказа бонусами. Ими можно оплатить следующий заказ.</p></div>
+  </div>
+ </section>
+ <section class="sec" id="delivery"><h2>Доставка и оплата</h2>
+  <div class="two">
+   <div class="panel"><h3>Доставка</h3><table class="t num"><tbody>${DELIV.map(d=>`<tr><td>${d.name}<br><span class="note">${d.hint}</span></td><td>${d.price?'от '+rub(d.price):'бесплатно'}</td></tr>`).join('')}</tbody></table><p class="note">При заказе от ${rub(FREE_FROM)} доставка бесплатная.</p></div>
+   <div class="panel"><h3>Оплата</h3><table class="t"><tbody><tr><td>Банковской картой на сайте</td><td>онлайн</td></tr><tr><td>По СБП через QR-код</td><td>онлайн</td></tr><tr><td>Наличными или картой при получении</td><td>СДЭК, самовывоз</td></tr><tr><td>По счёту для юрлиц</td><td>безнал</td></tr></tbody></table></div>
+  </div>
+ </section>
+ <section class="sec"><h2>Как сделать заказ</h2>
+  <div class="steps"><div>Выберите инструменты в каталоге и добавьте в корзину</div><div>Укажите город и способ доставки</div><div>Оплатите онлайн или выберите оплату при получении</div><div>Получите заказ и бонусы на следующую покупку</div></div>
+ </section>
+ <section class="sec" id="reviews"><h2>Отзывы <span class="note" style="font-weight:400">(примеры для демо)</span></h2>
+  <div class="three">
+   <div class="panel"><p class="quote">«Заказали набор для удаления в клинику. Пришёл через три дня, всё по списку, документы в коробке».</p><span class="who">Стоматологическая клиника, Махачкала</span></div>
+   <div class="panel"><p class="quote">«Беру элеваторы и кюретки уже третий раз. Удобно, что можно оплатить при получении в СДЭК».</p><span class="who">Хирург-стоматолог, Ставрополь</span></div>
+   <div class="panel"><p class="quote">«Иглодержатель Кастровьехо отличный, лёгкий. Помогли подобрать размер в WhatsApp».</p><span class="who">Пародонтолог, Москва</span></div>
+  </div>
+ </section>`;
+}
+
+function catalog(){
+ let list=P.filter(p=>(!filt.cats.size||filt.cats.has(p.cat))&&(!filt.stock||p.stock)
+  &&(filt.min===''||p.price>=+filt.min)&&(filt.max===''||p.price<=+filt.max)
+  &&(!filt.q||(p.name+' '+p.sku).toLowerCase().includes(filt.q.toLowerCase())));
+ if(filt.sort==='cheap')list.sort((a,b)=>a.price-b.price);
+ if(filt.sort==='exp')list.sort((a,b)=>b.price-a.price);
+ const open=V.querySelector('.filters')?.classList.contains('open');
+ V.innerHTML=`
+ <div class="sec-head" style="margin-bottom:16px"><h2>${filt.cats.size===1?catName([...filt.cats][0]):'Каталог'}</h2><span class="note num">${list.length} ${plural(list.length)}</span></div>
+ <div class="catalog">
+  <aside class="filters ${open?'open':''}" aria-label="Фильтры">
+   <div><h4>Категория</h4>${CATS.map(c=>`<label class="chk"><input type="checkbox" id="fc_${c.id}" data-fc="${c.id}" ${filt.cats.has(c.id)?'checked':''}>${c.name}<em class="num">${P.filter(p=>p.cat===c.id).length}</em></label>`).join('')}</div>
+   <div><h4>Цена, ₽</h4><div class="range"><input id="fmin" inputmode="numeric" placeholder="от" value="${filt.min}"><input id="fmax" inputmode="numeric" placeholder="до" value="${filt.max}"></div></div>
+   <label class="chk"><input type="checkbox" id="fstock" ${filt.stock?'checked':''}>Только в наличии</label>
+   <button class="link" id="freset" style="text-align:left">Сбросить фильтры</button>
+  </aside>
+  <div style="min-width:0">
+   <div class="toolbar">
+    <button class="btn ghost ftoggle" id="ftog">Фильтры</button>
+    ${filt.q?`<span class="note">Поиск: «<span id="qshow"></span>» <button class="link" id="qclear">очистить</button></span>`:'<span></span>'}
+    <select id="fsort" aria-label="Сортировка"><option value="pop">Сначала популярные</option><option value="cheap">Сначала дешевле</option><option value="exp">Сначала дороже</option></select>
+   </div>
+   ${list.length?`<div class="grid">${list.map(card).join('')}</div>`:`<div class="empty">Ничего не нашлось. Попробуйте изменить фильтры или напишите нам в WhatsApp, подберём инструмент.</div>`}
+  </div>
+ </div>`;
+ document.getElementById('fsort').value=filt.sort;
+ const qs=document.getElementById('qshow'); if(qs) qs.textContent=filt.q;
+}
+function plural(n){const m=n%10,h=n%100;return m===1&&h!==11?'товар':m>=2&&m<=4&&(h<12||h>14)?'товара':'товаров'}
+
+function totals(deliv){
+ const sub=subtotal(), disc=promo?Math.round(sub*PROMOS[promo]):0;
+ const d=deliv?((sub-disc)>=FREE_FROM&&deliv.price?0:deliv.price):null;
+ const total=sub-disc+(d||0);
+ return {sub,disc,d,total,bonus:Math.round((sub-disc)*.05)};
+}
+function summary(deliv,btn){
+ const t=totals(deliv);
+ return `<aside class="sum num">
+  <div class="row"><span>Товары (${count()})</span><span>${rub(t.sub)}</span></div>
+  ${t.disc?`<div class="row disc"><span>Промокод ${promo}</span><span>−${rub(t.disc)}</span></div>`:''}
+  <div class="row"><span>Доставка</span><span>${deliv?(t.d?rub(t.d):'бесплатно'):'на следующем шаге'}</span></div>
+  <div class="row total"><span>Итого</span><span>${rub(t.total)}</span></div>
+  ${!deliv?`<div class="promo"><input id="promoIn" placeholder="Промокод" aria-label="Промокод" value="${promo||''}"><button id="promoBtn" type="button">Применить</button></div><div class="note" id="promoMsg">Для проверки в демо: ALDI10</div>`:''}
+  <div class="bonus">Начислим <b>${t.bonus} бонусов</b> за этот заказ</div>
+  ${t.sub<FREE_FROM?`<div class="note">До бесплатной доставки осталось ${rub(FREE_FROM-t.sub)}</div>`:''}
+  ${btn}
+ </aside>`;
+}
+function cartView(){
+ const ids=Object.keys(cart);
+ if(!ids.length){V.innerHTML=`<div class="done"><h2>Корзина пуста</h2><p class="note">Добавьте инструменты из каталога.</p><a class="btn" href="#catalog">Перейти в каталог</a></div>`;return}
+ V.innerHTML=`<h2 style="margin-bottom:16px">Корзина</h2>
+ <div class="cartwrap">
+  <div style="display:flex;flex-direction:column;gap:10px;min-width:0">${ids.map(id=>{const p=byId(+id);return `
+   <div class="line"><div class="thumb">${IC[p.cat]}</div>
+    <div style="min-width:0"><div class="sku">арт. ${p.sku}</div><h3>${p.name}</h3><div class="note num">${rub(p.price)} за шт.</div></div>
+    <div class="lineright"><div class="qty"><button data-dec="${id}" aria-label="Меньше">−</button><span class="num">${cart[id]}</span><button data-inc="${id}" aria-label="Больше">+</button></div><b class="num">${rub(p.price*cart[id])}</b><button class="rm" data-rm="${id}">Удалить</button></div>
+   </div>`}).join('')}</div>
+  ${summary(null,'<a class="btn block" href="#checkout">Оформить заказ</a>')}
+ </div>`;
+}
+function checkoutView(){
+ if(!count()){location.hash='cart';return}
+ const sel=checkoutView.d||'cdek';
+ const deliv=DELIV.find(d=>d.id===sel);
+ V.innerHTML=`<h2 style="margin-bottom:16px">Оформление заказа</h2>
+ <div class="cartwrap">
+  <form class="co" id="co" novalidate>
+   <div class="panel"><h3>Покупатель</h3>
+    <div class="f2"><div class="f"><label for="cName">Имя или клиника</label><input id="cName" autocomplete="name"></div>
+    <div class="f"><label for="cPhone">Телефон</label><input id="cPhone" inputmode="tel" autocomplete="tel" placeholder="+7"></div></div>
+    <div class="f"><label for="cCity">Город</label><input id="cCity" placeholder="Например, Махачкала"></div>
+   </div>
+   <div class="panel"><h3>Доставка</h3><div class="opts">${DELIV.map(d=>`
+    <label class="opt"><input type="radio" name="deliv" id="d_${d.id}" value="${d.id}" ${d.id===sel?'checked':''}><div><b>${d.name}</b><span>${d.hint}</span></div><span class="pr num">${d.price?(subtotal()>=FREE_FROM?'бесплатно':rub(d.price)):'бесплатно'}</span></label>`).join('')}</div>
+    <p class="note">В рабочей версии стоимость считается автоматически по тарифам СДЭК и Почты для вашего города.</p>
+   </div>
+   <div class="panel"><h3>Оплата</h3><div class="opts">
+    <label class="opt"><input type="radio" name="pay" id="p_card" value="Картой онлайн" checked><div><b>Картой онлайн</b><span>Visa, Mastercard, МИР</span></div></label>
+    <label class="opt"><input type="radio" name="pay" id="p_sbp" value="СБП"><div><b>СБП</b><span>Оплата по QR-коду из приложения банка</span></div></label>
+    <label class="opt"><input type="radio" name="pay" id="p_cod" value="При получении"><div><b>При получении</b><span>Наличными или картой в пункте СДЭК</span></div></label>
+   </div></div>
+   <div class="err" id="coErr" aria-live="polite"></div>
+  </form>
+  ${summary(deliv,'<button class="btn block" form="co" type="submit">Подтвердить заказ</button><div class="note">В демо оплата не проводится</div>')}
+ </div>`;
+}
+function doneView(){
+ const o=doneView.o;
+ if(!o){location.hash='home';return}
+ V.innerHTML=`<div class="done"><div class="ok">✓</div><h2>Заказ № <span class="num">${o.n}</span> оформлен</h2>
+  <p class="note" id="doneTxt"></p>
+  <div class="panel" style="width:100%;text-align:left"><table class="t num"><tbody>
+   <tr><td>Сумма</td><td>${rub(o.total)}</td></tr><tr><td>Доставка</td><td>${o.deliv}</td></tr><tr><td>Оплата</td><td>${o.pay}</td></tr><tr><td>Бонусы</td><td>+${o.bonus}</td></tr></tbody></table></div>
+  <p class="note">Демо: так покупатель видит подтверждение. В рабочей версии заказ сразу придёт вам в Telegram, а покупателю на почту.</p>
+  <a class="btn" href="#catalog">Вернуться в каталог</a></div>`;
+ document.getElementById('doneTxt').textContent=(o.name?o.name+', с':'С')+'пасибо! Менеджер свяжется с вами в течение 15 минут, чтобы подтвердить заказ.';
+}
+
+function openProduct(id){
+ const p=byId(id), M=document.getElementById('modal');
+ M.innerHTML=`<div class="modal" id="mbg"><div class="sheet" role="dialog" aria-modal="true" aria-label="${p.name}">
+  <button class="close" id="mclose" aria-label="Закрыть">×</button>
+  <div class="pic">${IC[p.cat]}</div>
+  <div class="info">
+   <div class="sku">арт. ${p.sku} · ${catName(p.cat)}</div>
+   <h2>${p.name}</h2>
+   <div class="price num"><b style="font-size:24px">${rub(p.price)}</b>${p.old?`<s>${rub(p.old)}</s>`:''}</div>
+   <div class="stock ${p.stock?'':'no'}">${p.stock?'В наличии, отправим сегодня':'Под заказ, 7–10 дней'}</div>
+   <dl class="props num">${p.len?`<dt>Длина</dt><dd>${p.len} мм</dd>`:''}<dt>Материал</dt><dd>${p.mat}</dd><dt>Стерилизация</dt><dd>Автоклав до 134 °C</dd><dt>Гарантия</dt><dd>12 месяцев</dd></dl>
+   <button class="add" data-add="${p.id}">${cart[p.id]?'В корзине · '+cart[p.id]:'В корзину'}</button>
+   <a class="btn ghost" target="_blank" rel="noopener" href="https://wa.me/79654111186?text=${encodeURIComponent('Здравствуйте! Вопрос по товару: '+p.name+' (арт. '+p.sku+')')}">Спросить в WhatsApp</a>
+  </div></div></div>`;
+ document.getElementById('mclose').focus();
+}
+function closeModal(){document.getElementById('modal').innerHTML=''}
+
+function route(){
+ const h=location.hash.replace('#','')||'home';
+ closeModal();
+ document.querySelectorAll('[data-nav]').forEach(a=>a.classList.toggle('on',a.dataset.nav===h));
+ ({home,catalog,cart:cartView,checkout:checkoutView,done:doneView}[h]||home)();
+ if(!route.keep) window.scrollTo(0,0); route.keep=false;
+ if(route.jump){const el=document.getElementById(route.jump);route.jump=null;if(el)el.scrollIntoView({block:'start'})}
+}
+addEventListener('hashchange',route);
+
+document.addEventListener('click',e=>{
+ const t=e.target.closest('[data-add],[data-open],[data-setcat],[data-jump],[data-inc],[data-dec],[data-rm],#mclose,#ftog,#freset,#qclear,#promoBtn');
+ if(e.target.id==='mbg'){closeModal();return}
+ if(!t) return;
+ if(t.dataset.add){add(+t.dataset.add);if(document.getElementById('modal').innerHTML)openProduct(+t.dataset.add);return}
+ if(t.dataset.open){openProduct(+t.dataset.open);return}
+ if(t.dataset.setcat){e.preventDefault();filt.cats=new Set([t.dataset.setcat]);if(location.hash==='#catalog')catalog();else location.hash='catalog';return}
+ if(t.dataset.jump){e.preventDefault();route.jump=t.dataset.jump;if((location.hash||'#home')==='#home'){const el=document.getElementById(t.dataset.jump);if(el)el.scrollIntoView({block:'start'})}else location.hash='home';return}
+ if(t.dataset.inc){cart[t.dataset.inc]++;persist();updCount();cartView();return}
+ if(t.dataset.dec){if(--cart[t.dataset.dec]<=0)delete cart[t.dataset.dec];persist();updCount();cartView();return}
+ if(t.dataset.rm){delete cart[t.dataset.rm];persist();updCount();cartView();return}
+ if(t.id==='mclose'){closeModal();return}
+ if(t.id==='ftog'){document.querySelector('.filters').classList.toggle('open');return}
+ if(t.id==='freset'){filt={cats:new Set(),min:'',max:'',stock:false,sort:'pop',q:''};document.getElementById('q').value='';catalog();return}
+ if(t.id==='qclear'){filt.q='';document.getElementById('q').value='';catalog();return}
+ if(t.id==='promoBtn'){const v=document.getElementById('promoIn').value.trim().toUpperCase();
+  if(PROMOS[v]){promo=v;persist();cartView();toast('Промокод применён')}
+  else{promo=null;persist();cartView();document.getElementById('promoMsg').textContent='Такого промокода нет. В демо работает ALDI10.'}}
+});
+document.addEventListener('change',e=>{
+ const t=e.target;
+ if(t.dataset.fc){t.checked?filt.cats.add(t.dataset.fc):filt.cats.delete(t.dataset.fc);catalog();return}
+ if(t.id==='fstock'){filt.stock=t.checked;catalog();return}
+ if(t.id==='fmin'||t.id==='fmax'){filt[t.id==='fmin'?'min':'max']=t.value.replace(/\D/g,'');catalog();return}
+ if(t.id==='fsort'){filt.sort=t.value;catalog();return}
+ if(t.name==='deliv'){checkoutView.d=t.value;const y=scrollY;checkoutView();scrollTo(0,y)}
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+document.getElementById('searchForm').addEventListener('submit',e=>{e.preventDefault();filt.q=document.getElementById('q').value.trim();if(location.hash==='#catalog')catalog();else location.hash='catalog'});
+document.addEventListener('submit',e=>{
+ if(e.target.id!=='co')return; e.preventDefault();
+ const name=document.getElementById('cName').value.trim(),phone=document.getElementById('cPhone').value.trim(),city=document.getElementById('cCity').value.trim();
+ const err=document.getElementById('coErr');
+ if(!phone||!city){err.textContent='Укажите телефон и город, чтобы мы могли рассчитать доставку и связаться с вами.';return}
+ const d=DELIV.find(x=>x.id===(checkoutView.d||'cdek')), t=totals(d);
+ doneView.o={n:String(10000+Math.floor(Math.random()*90000)),name,total:t.total,deliv:d.name,pay:document.querySelector('input[name=pay]:checked').value,bonus:t.bonus};
+ cart={};promo=null;persist();updCount();location.hash='done';
+});
+updCount(); route();
+</script>
+
+</html>
